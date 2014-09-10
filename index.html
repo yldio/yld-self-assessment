@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Angular Simple Skeleton</title>
+    <link rel="stylesheet" href="foundation/css/normalize.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="foundation/css/foundation.min.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body ng-app=selfAssessment ng-controller=app>
+    <header>
+      <div class=row>
+        <h1 >YLD self-assessment</h1>
+      </div>
+      <div class=row>
+         <ul class="tabs" data-tab role=tablist>
+           <li class="tab-title" ng-class="{ active: viewing('feedback') }">
+             <a href="#feedback">Feedback</a>
+          </li>
+           <li class="tab-title" ng-class="{ active: viewing('checklists') }">
+             <a href="#checklists">Checklist</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <div class=row >
+
+      <ng-view></ng-view>
+
+
+
+    </div>
+
+    <script type="text/ng-template" id="home.html">
+      <section ng-if="!trello.authorised" ng-controller=connect>
+        <h2>Welcome to YLD self-assessment</h2>
+        <p>Please tell us what you want to know, and how we're doing!</p>
+        <p>We're using Trello to capture your info, so please connect below.</p>
+        <button ng-click="connect()">Connect to Trello</button>
+      </section>
+      <section ng-if="trello.authorised">
+      </section>
+    </script>
+
+    <script type="text/ng-template" id="feedback.html">
+      <h2>Tell us what you think</h2>
+      <ul>
+      </ul>
+    </script>
+
+    <script type="text/ng-template" id="areas.html">
+      <section ng-if="trello.authorised" ng-controller=lists>
+        <ul class="tabs" data-tab role=tablist>
+          <li ng-repeat='card in cards' class="tab-title" ng-class='{ active: active == card}' ng-click="select(card)">
+            <a >{{ card.name }} {{ card.complete | toCheck }}</a>
+          </li>
+        </ul>
+
+        <div ng-repeat='card in cards' ng-if='card == active'>
+          <h3>{{ card.name }}</h3>
+          <button>I need help on everything here</button>
+          <button>I know everything here</button>
+          <ul class="no-bullet">
+            <li ng-repeat="item in card.checklist">
+              <input ng-model="item.checked" 
+                     ng-change="checked(card, card.checklist, item)"
+                     type=checkbox 
+                     id='{{ card.name }}-{{ item.id }}' 
+                     ng-disabled="item.changing">
+              <label for='{{ card.name }}-{{ item.id }}'>
+                <span ng-bind-html="item.name | backticks"></span>
+              </label>
+            </li>
+          </ul>
+        </div> 
+      </section>
+    </script>
+
+    <script src=//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js></script>
+    <script src=https://code.jquery.com/jquery-2.1.1.min.js></script>
+    <script src="angular.js"></script>
+    <script src="angular-route.js"></script>
+    <script src="https://api.trello.com/1/client.js?key=21693b4108a32e6f5a48413bbf24868d"></script>
+    <script src="app.js"></script>
+    
+</body>
